@@ -1,0 +1,34 @@
+[project]
+name = "money-board-backend"
+version = "0.1.0"
+description = "Money Board backend: API, data acquisition, and financial calculation engine"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "psycopg[binary]>=3.2",
+    "celery>=5.4",
+    "redis>=5.2",
+    "numpy>=2.1",
+    "pandas>=2.2",
+    "scipy>=1.14",
+    "statsmodels>=0.14",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "httpx>=0.27",
+    "ruff>=0.7",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
