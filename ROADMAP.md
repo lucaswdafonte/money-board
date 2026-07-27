@@ -59,7 +59,7 @@ instead of a static page.
 
 ---
 
-## Phase 2 — Portfolio & Asset Registry ⬜
+## Phase 2 — Portfolio & Asset Registry ✅
 
 **Usable product:** a logged-in user can create a portfolio, manually register assets into it
 (ticker, name, asset class, sector, country, currency), and see them listed. No prices, no

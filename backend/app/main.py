@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routers import auth, health
+from app.api.routers import assets, auth, health, portfolios
 from app.core.config import settings
 
 app = FastAPI(title="Money Board API")
@@ -16,3 +16,5 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(auth.router)
+app.include_router(portfolios.router)
+app.include_router(assets.router)

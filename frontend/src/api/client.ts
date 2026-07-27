@@ -52,3 +52,104 @@ export const authApi = {
   login,
   me,
 }
+
+export interface Portfolio {
+  id: string
+  name: string
+  created_at: string
+  updated_at: string
+}
+
+export type AssetClass =
+  | 'stock'
+  | 'fixed_income'
+  | 'fund'
+  | 'real_estate'
+  | 'crypto'
+  | 'cash'
+  | 'other'
+
+export interface Asset {
+  id: string
+  portfolio_id: string
+  ticker: string
+  name: string
+  asset_class: AssetClass
+  sector: string | null
+  country: string | null
+  currency: string
+  created_at: string
+  updated_at: string
+}
+
+export interface AssetInput {
+  ticker: string
+  name: string
+  asset_class: AssetClass
+  sector?: string | null
+  country?: string | null
+  currency: string
+}
+
+function listPortfolios(token: string) {
+  return request<Portfolio[]>('/portfolios', {}, token)
+}
+
+function createPortfolio(token: string, name: string) {
+  return request<Portfolio>('/portfolios', { method: 'POST', body: JSON.stringify({ name }) }, token)
+}
+
+function getPortfolio(token: string, portfolioId: string) {
+  return request<Portfolio>(`/portfolios/${portfolioId}`, {}, token)
+}
+
+function updatePortfolio(token: string, portfolioId: string, name: string) {
+  return request<Portfolio>(
+    `/portfolios/${portfolioId}`,
+    { method: 'PATCH', body: JSON.stringify({ name }) },
+    token,
+  )
+}
+
+function deletePortfolio(token: string, portfolioId: string) {
+  return request<void>(`/portfolios/${portfolioId}`, { method: 'DELETE' }, token)
+}
+
+export const portfolioApi = {
+  list: listPortfolios,
+  create: createPortfolio,
+  get: getPortfolio,
+  update: updatePortfolio,
+  delete: deletePortfolio,
+}
+
+function listAssets(token: string, portfolioId: string) {
+  return request<Asset[]>(`/portfolios/${portfolioId}/assets`, {}, token)
+}
+
+function createAsset(token: string, portfolioId: string, input: AssetInput) {
+  return request<Asset>(
+    `/portfolios/${portfolioId}/assets`,
+    { method: 'POST', body: JSON.stringify(input) },
+    token,
+  )
+}
+
+function updateAsset(token: string, portfolioId: string, assetId: string, input: Partial<AssetInput>) {
+  return request<Asset>(
+    `/portfolios/${portfolioId}/assets/${assetId}`,
+    { method: 'PATCH', body: JSON.stringify(input) },
+    token,
+  )
+}
+
+function deleteAsset(token: string, portfolioId: string, assetId: string) {
+  return request<void>(`/portfolios/${portfolioId}/assets/${assetId}`, { method: 'DELETE' }, token)
+}
+
+export const assetApi = {
+  list: listAssets,
+  create: createAsset,
+  update: updateAsset,
+  delete: deleteAsset,
+}
