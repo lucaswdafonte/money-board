@@ -1,0 +1,12 @@
+{
+  "name": "browser-check",
+  "private": true,
+  "type": "module",
+  "description": "Ad-hoc Playwright driver for visually smoke-testing the money-board frontend. Not part of the app's dependency tree or test suite.",
+  "scripts": {
+    "check": "node check.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}

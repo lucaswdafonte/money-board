@@ -1,6 +1,6 @@
 # money-board
 
-Advanced investment portfolio management platform — analyze, compare, simulate, and optimize investments using financial, statistical, and economic models. See [CLAUDE.md](CLAUDE.md) for product vision/goals and [ARCHITECTURE.md](ARCHITECTURE.md) for binding technical decisions.
+Advanced investment portfolio management platform — analyze, compare, simulate, and optimize investments using financial, statistical, and economic models. See [CLAUDE.md](CLAUDE.md) for product vision/goals, [ARCHITECTURE.md](ARCHITECTURE.md) for binding technical decisions, and [ROADMAP.md](ROADMAP.md) for the phased build plan.
 
 ## Stack
 
@@ -80,6 +80,22 @@ docker compose exec frontend npm run build
 
 Per [ARCHITECTURE.md](ARCHITECTURE.md): calculation-layer tests must not hit the network or database (pure input/output on domain types), and data-acquisition-layer tests must use mocked/fixture HTTP responses rather than live external calls.
 
+## Auth
+
+Trivial single-tenant-today, pluggable-later auth (see ARCHITECTURE.md's "Open / Not Yet Decided" — a
+real auth provider isn't chosen yet): email/password registration, JWT bearer tokens.
+
+```
+POST /auth/register  {"email": "...", "password": "..."}  -> {"access_token": "...", "token_type": "bearer"}
+POST /auth/login     {"email": "...", "password": "..."}  -> {"access_token": "...", "token_type": "bearer"}
+GET  /auth/me         Authorization: Bearer <token>        -> {"id": "...", "email": "..."}
+```
+
+The frontend stores the token in `localStorage` and attaches it as an `Authorization` header on
+every API request; unauthenticated visitors are redirected to `/login`. `SECRET_KEY` (in `.env`)
+signs the tokens — the committed default is dev-only, generate a real random value for any
+shared/deployed environment.
+
 ## Editor setup (VS Code)
 
 The backend's dependencies are installed inside the Docker image at build time, not on your host — so a plain VS Code window has no interpreter to resolve `import`s against (e.g. `Import "pydantic_settings" could not be resolved`). Docker remains the only thing needed to *run* the project; this venv exists purely so the editor can see the packages.
@@ -97,12 +113,16 @@ Re-run `uv sync --frozen` whenever `backend/uv.lock` changes, same as rebuilding
 
 ## Database migrations
 
-Migrations are managed with Alembic, run inside the backend container:
+Migrations are managed with Alembic. The `backend` service's command runs `alembic upgrade head`
+before starting `uvicorn`, so every `docker compose up` (including a fresh clone or after
+`docker compose down -v` wipes `db_data`) applies any pending migrations automatically — you don't
+need to run `upgrade` by hand for normal startup.
+
+You do still run Alembic manually to *create* a migration after changing/adding models, and it's
+useful for checking state:
 
 ```bash
-# After changing/adding SQLAlchemy models:
 docker compose exec backend alembic revision --autogenerate -m "describe the change"
-docker compose exec backend alembic upgrade head
 
 # Check current revision
 docker compose exec backend alembic current
@@ -117,13 +137,23 @@ backend/
     domain/        # Pure calculation layer (no HTTP/DB/provider knowledge)
     acquisition/    # External data fetching/normalization (market data, BCB, etc.)
     services/       # Orchestration between acquisition and domain layers
+    models/         # SQLAlchemy ORM entities (persisted state: User, Portfolio, ...)
+    schemas/        # Pydantic request/response schemas
     tasks/          # Celery app and background jobs
-    core/           # Config, DB session, shared mixins (e.g. user-scoping)
+    core/           # Config, DB session, security, shared mixins (e.g. user-scoping)
   alembic/          # DB migrations
   tests/            # Mirrors app/ structure
 frontend/
-  src/              # React + TypeScript app
+  src/
+    api/            # Typed fetch client for the backend
+    auth/           # Auth context/provider, login/register pages, protected routes
+    layout/         # App shell (nav, authenticated layout)
+    pages/          # Route-level pages
 docker-compose.yml  # Orchestrates db, redis, backend, worker, frontend
 ```
+
+`app/models/` (persisted SQLAlchemy entities) is kept separate from `app/domain/` (pure
+calculation functions) — see [ARCHITECTURE.md](ARCHITECTURE.md) §1: the domain layer must not
+know about storage, so ORM models live in their own layer rather than blurring that boundary.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the reasoning behind these boundaries (especially the acquisition/calculation split and multi-tenancy requirements) before adding new modules.

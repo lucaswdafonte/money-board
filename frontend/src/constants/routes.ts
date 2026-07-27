@@ -1,0 +1,6 @@
+const LOGIN_ROUTE = "/login";
+const REGISTER_ROUTE = "/register";
+const DASHBOARD_ROUTE = "/";
+const NOT_FOUND_ROUTE = "*";
+
+export { LOGIN_ROUTE, REGISTER_ROUTE, DASHBOARD_ROUTE, NOT_FOUND_ROUTE };
