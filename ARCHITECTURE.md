@@ -26,6 +26,14 @@ This file records binding technical decisions for this project. It complements `
   Dark mode is a manual toggle (`frontend/src/theme/ThemeProvider.tsx`, `light`/`dark`/`system`,
   persisted to `localStorage`), not just `prefers-color-scheme` — new pages must use theme
   tokens/Tailwind classes, never hardcoded colors.
+- **Frontend testing: Vitest + React Testing Library**
+  `jsdom` environment, config lives in `vite.config.ts`'s `test` block (via `vitest/config`'s
+  `defineConfig`), setup file at `frontend/src/test/setup.ts`. Tests are colocated next to source
+  (`ThemeProvider.test.tsx` beside `ThemeProvider.tsx`), not in a mirrored `tests/` directory.
+  Import `describe`/`it`/`expect`/`vi` explicitly from `'vitest'` per file — no `globals: true`.
+  Per the money-board-review skill: the first diff introducing non-trivial frontend behavior (a
+  hook with logic, a validator, a reducer, a computed/derived value) must add a test for it in the
+  same PR; presentational/JSX-only components don't need one.
 
 Do not swap any of these without discussing it with the user first — these were chosen deliberately after weighing alternatives (e.g. a full-TypeScript stack was considered and rejected because Python's numerical ecosystem is central to the project's correctness requirements).
 
