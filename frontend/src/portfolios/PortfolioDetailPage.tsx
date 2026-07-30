@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { ApiError, assetApi, portfolioApi, type Asset, type AssetInput, type Portfolio } from '../api/client'
 import { AssetForm } from '../assets/AssetForm'
 import { useAuth } from '../auth/useAuth'
@@ -47,20 +56,22 @@ export function PortfolioDetailPage() {
     setAssets((current) => current.filter((asset) => asset.id !== assetId))
   }
 
-  if (isLoading) return <p className="status-message">Loading portfolio…</p>
-  if (error || !portfolio) return <p className="form-error">{error ?? 'Portfolio not found'}</p>
+  if (isLoading)
+    return <p className="mt-16 text-center text-muted-foreground">Loading portfolio…</p>
+  if (error || !portfolio)
+    return <p className="mt-16 text-center text-destructive">{error ?? 'Portfolio not found'}</p>
 
   return (
-    <div className="portfolio-detail-page">
-      <h1>{portfolio.name}</h1>
+    <div className="mx-auto max-w-3xl">
+      <h1 className="text-3xl font-medium text-foreground">{portfolio.name}</h1>
 
       <section>
-        <div className="section-header">
-          <h2>Assets</h2>
+        <div className="mt-8 mb-4 flex items-center justify-between">
+          <h2 className="text-xl font-medium text-foreground">Assets</h2>
           {!isAdding && (
-            <button type="button" onClick={() => setIsAdding(true)}>
+            <Button variant="outline" onClick={() => setIsAdding(true)}>
               Add asset
-            </button>
+            </Button>
           )}
         </div>
 
@@ -69,25 +80,25 @@ export function PortfolioDetailPage() {
         )}
 
         {assets.length === 0 ? (
-          <p>No assets registered yet.</p>
+          <p className="text-muted-foreground">No assets registered yet.</p>
         ) : (
-          <table className="asset-table">
-            <thead>
-              <tr>
-                <th>Ticker</th>
-                <th>Name</th>
-                <th>Class</th>
-                <th>Sector</th>
-                <th>Country</th>
-                <th>Currency</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Ticker</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Class</TableHead>
+                <TableHead>Sector</TableHead>
+                <TableHead>Country</TableHead>
+                <TableHead>Currency</TableHead>
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {assets.map((asset) =>
                 editingAssetId === asset.id ? (
-                  <tr key={asset.id}>
-                    <td colSpan={7}>
+                  <TableRow key={asset.id}>
+                    <TableCell colSpan={7}>
                       <AssetForm
                         initial={{
                           ticker: asset.ticker,
@@ -101,29 +112,33 @@ export function PortfolioDetailPage() {
                         onSubmit={(input) => handleUpdate(asset.id, input)}
                         onCancel={() => setEditingAssetId(null)}
                       />
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ) : (
-                  <tr key={asset.id}>
-                    <td>{asset.ticker}</td>
-                    <td>{asset.name}</td>
-                    <td>{ASSET_CLASS_LABELS[asset.asset_class]}</td>
-                    <td>{asset.sector ?? '—'}</td>
-                    <td>{asset.country ?? '—'}</td>
-                    <td>{asset.currency}</td>
-                    <td className="asset-actions">
-                      <button type="button" onClick={() => setEditingAssetId(asset.id)}>
+                  <TableRow key={asset.id}>
+                    <TableCell>{asset.ticker}</TableCell>
+                    <TableCell>{asset.name}</TableCell>
+                    <TableCell>{ASSET_CLASS_LABELS[asset.asset_class]}</TableCell>
+                    <TableCell>{asset.sector ?? '—'}</TableCell>
+                    <TableCell>{asset.country ?? '—'}</TableCell>
+                    <TableCell>{asset.currency}</TableCell>
+                    <TableCell className="flex gap-2 whitespace-nowrap">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditingAssetId(asset.id)}
+                      >
                         Edit
-                      </button>
-                      <button type="button" onClick={() => handleDelete(asset.id)}>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleDelete(asset.id)}>
                         Delete
-                      </button>
-                    </td>
-                  </tr>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 ),
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         )}
       </section>
     </div>

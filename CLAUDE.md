@@ -273,3 +273,5 @@ Potential future modules include:
 - Make algorithms reusable.
 - Prefer deterministic calculations whenever possible.
 - Design for long-term maintainability.
+- UI is built with shadcn/ui (Tailwind v4 + Radix) — see ARCHITECTURE.md's Tech Stack section for
+  where tokens/primitives live and how to extend them before writing new frontend UI.

@@ -71,6 +71,9 @@ docker compose down -v       # also wipes the Postgres volume — destructive
 # Backend (pytest, run inside the backend container so it uses the same env/deps as prod)
 docker compose exec backend pytest
 
+# Frontend tests (Vitest + React Testing Library)
+docker compose exec frontend npm run test
+
 # Frontend lint
 docker compose exec frontend npm run lint
 

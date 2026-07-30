@@ -7,7 +7,6 @@ import { AppShell } from './layout/AppShell'
 import { DashboardPage } from './pages/DashboardPage'
 import { PortfolioDetailPage } from './portfolios/PortfolioDetailPage'
 import { PortfoliosPage } from './portfolios/PortfoliosPage'
-import './App.css'
 import {
   DASHBOARD_ROUTE,
   LOGIN_ROUTE,

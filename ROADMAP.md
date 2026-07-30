@@ -72,6 +72,14 @@ transactions yet — just the registry.
 
 ---
 
+**Infra interlude (between Phase 2 and 3) ✅ — shadcn/ui adoption:** Phase 1–2's hand-rolled CSS
+replaced with shadcn/ui + Tailwind v4 across all existing screens, plus a manual light/dark/system
+theme toggle. No user-facing behavior changes; see ARCHITECTURE.md's Tech Stack section for the
+resulting conventions. Done before Phase 3 so its transaction forms build on the new primitives
+from the start instead of the old hand-rolled classes.
+
+---
+
 ## Phase 3 — Transactions, Cash Flow & Positions ⬜
 
 **Usable product:** user records buy/sell transactions and deposits/withdrawals per asset; the app
