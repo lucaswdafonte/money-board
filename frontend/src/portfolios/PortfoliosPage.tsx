@@ -1,5 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { ApiError, portfolioApi, type Portfolio } from '../api/client'
 import { useAuth } from '../auth/useAuth'
 import { GENERIC_ERROR } from '../constants/error_messages'
@@ -38,34 +41,45 @@ export function PortfoliosPage() {
     }
   }
 
-  if (isLoading) return <p className="status-message">Loading portfolios…</p>
+  if (isLoading)
+    return <p className="mt-16 text-center text-muted-foreground">Loading portfolios…</p>
 
   return (
-    <div className="portfolios-page">
-      <h1>Portfolios</h1>
+    <div className="mx-auto max-w-3xl">
+      <h1 className="text-3xl font-medium text-foreground">Portfolios</h1>
 
-      <form className="inline-form" onSubmit={handleCreate}>
-        <input
+      <form className="my-6 flex gap-3" onSubmit={handleCreate}>
+        <Input
           type="text"
           placeholder="Portfolio name"
           value={name}
           onChange={(event) => setName(event.target.value)}
           required
           maxLength={200}
+          className="flex-1"
         />
-        <button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Creating…' : 'Create portfolio'}
-        </button>
+        </Button>
       </form>
-      {error && <p className="form-error">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
 
       {portfolios.length === 0 ? (
-        <p>You don't have any portfolios yet. Create one above to start registering assets.</p>
+        <p className="text-muted-foreground">
+          You don't have any portfolios yet. Create one above to start registering assets.
+        </p>
       ) : (
-        <ul className="portfolio-list">
+        <ul className="flex flex-col gap-2">
           {portfolios.map((portfolio) => (
             <li key={portfolio.id}>
-              <Link to={portfolioDetailRoute(portfolio.id)}>{portfolio.name}</Link>
+              <Card className="px-4 py-3">
+                <Link
+                  to={portfolioDetailRoute(portfolio.id)}
+                  className="font-medium text-primary underline-offset-4 hover:underline"
+                >
+                  {portfolio.name}
+                </Link>
+              </Card>
             </li>
           ))}
         </ul>

@@ -14,6 +14,18 @@ This file records binding technical decisions for this project. It complements `
   Any long-running computation (Monte Carlo runs, bootstrap resampling, bulk simulations, backtests) MUST run as a background job, not inline in an HTTP request handler.
 - **Frontend: React + TypeScript**
   Charting library chosen per-dashboard as needed (Recharts as default; visx/ECharts if finer control is required). Consult the `dataviz` skill before building any chart/dashboard UI.
+- **Component library: shadcn/ui (Tailwind CSS v4 + Radix primitives)**
+  Components are generated into `frontend/src/components/ui/` via the `shadcn` CLI
+  (`npx shadcn add <component>`) — they are owned source, not a `node_modules` dependency. Extend a
+  primitive through its variant/props API; do not add one-off style overrides inside
+  `components/ui/*` for a single call site — put page-specific styling at the call site instead.
+  Design tokens (color, radius, spacing) are CSS variables in `frontend/src/index.css` under
+  `:root`/`.dark` — the single source of truth for both UI chrome and charts. Chart series colors
+  (Phase 5+) must reference `--chart-1`…`--chart-5` from this file rather than a separate palette,
+  per the `dataviz` skill's "swap the placeholder palette for your own" guidance.
+  Dark mode is a manual toggle (`frontend/src/theme/ThemeProvider.tsx`, `light`/`dark`/`system`,
+  persisted to `localStorage`), not just `prefers-color-scheme` — new pages must use theme
+  tokens/Tailwind classes, never hardcoded colors.
 
 Do not swap any of these without discussing it with the user first — these were chosen deliberately after weighing alternatives (e.g. a full-TypeScript stack was considered and rejected because Python's numerical ecosystem is central to the project's correctness requirements).
 

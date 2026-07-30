@@ -1,4 +1,14 @@
 import { useState, type FormEvent } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import type { AssetClass, AssetInput } from '../api/client'
 import { ApiError } from '../api/client'
 import { ASSET_CLASSES, ASSET_CLASS_LABELS } from '../constants/asset_classes'
@@ -46,75 +56,86 @@ export function AssetForm({ initial, submitLabel, onSubmit, onCancel }: AssetFor
   }
 
   return (
-    <form className="asset-form" onSubmit={handleSubmit}>
-      <label>
-        Ticker
-        <input
+    <form
+      className="mb-4 flex flex-wrap gap-4 rounded-lg border border-border p-5"
+      onSubmit={handleSubmit}
+    >
+      <div className="flex min-w-40 flex-1 flex-col gap-1.5">
+        <Label htmlFor="ticker">Ticker</Label>
+        <Input
+          id="ticker"
           value={values.ticker}
           onChange={(event) => setValues({ ...values, ticker: event.target.value })}
           required
           maxLength={20}
         />
-      </label>
-      <label>
-        Name
-        <input
+      </div>
+      <div className="flex min-w-40 flex-1 flex-col gap-1.5">
+        <Label htmlFor="name">Name</Label>
+        <Input
+          id="name"
           value={values.name}
           onChange={(event) => setValues({ ...values, name: event.target.value })}
           required
           maxLength={200}
         />
-      </label>
-      <label>
-        Asset class
-        <select
+      </div>
+      <div className="flex min-w-40 flex-1 flex-col gap-1.5">
+        <Label htmlFor="asset_class">Asset class</Label>
+        <Select
           value={values.asset_class}
-          onChange={(event) =>
-            setValues({ ...values, asset_class: event.target.value as AssetClass })
-          }
+          onValueChange={(value) => setValues({ ...values, asset_class: value as AssetClass })}
         >
-          {ASSET_CLASSES.map((assetClass) => (
-            <option key={assetClass} value={assetClass}>
-              {ASSET_CLASS_LABELS[assetClass]}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label>
-        Sector
-        <input
+          <SelectTrigger id="asset_class" className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {ASSET_CLASSES.map((assetClass) => (
+              <SelectItem key={assetClass} value={assetClass}>
+                {ASSET_CLASS_LABELS[assetClass]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="flex min-w-40 flex-1 flex-col gap-1.5">
+        <Label htmlFor="sector">Sector</Label>
+        <Input
+          id="sector"
           value={values.sector ?? ''}
           onChange={(event) => setValues({ ...values, sector: event.target.value })}
           maxLength={100}
         />
-      </label>
-      <label>
-        Country
-        <input
+      </div>
+      <div className="flex min-w-40 flex-1 flex-col gap-1.5">
+        <Label htmlFor="country">Country</Label>
+        <Input
+          id="country"
           value={values.country ?? ''}
           onChange={(event) => setValues({ ...values, country: event.target.value })}
           maxLength={100}
         />
-      </label>
-      <label>
-        Currency
-        <input
+      </div>
+      <div className="flex min-w-40 flex-1 flex-col gap-1.5">
+        <Label htmlFor="currency">Currency</Label>
+        <Input
+          id="currency"
           value={values.currency}
           onChange={(event) => setValues({ ...values, currency: event.target.value })}
           required
           maxLength={3}
           placeholder="USD"
         />
-      </label>
-      {error && <p className="form-error">{error}</p>}
-      <div className="asset-form-actions">
-        <button type="submit" disabled={isSubmitting}>
+      </div>
+      {error && <p className="w-full text-sm text-destructive">{error}</p>}
+      <div className="flex items-end gap-2">
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Saving…' : submitLabel}
-        </button>
+        </Button>
         {onCancel && (
-          <button type="button" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         )}
       </div>
     </form>
